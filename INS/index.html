@@ -42,6 +42,8 @@ button,input,textarea,select{font:inherit;color:inherit}
 .person{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:0;background:transparent;text-align:left;width:100%;cursor:pointer}
 .person[aria-pressed="true"]{background:var(--sel)}
 .av{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.c-rhina{background:#7a1f3d!important;color:#fff!important}.c-matt{background:#2e7d4f!important;color:#fff!important}.c-chloe{background:#f3c6d2!important;color:#8a2f4c!important}
+.tbl .who .av{width:24px;height:24px;font-size:10px}
 .person .nm{font-weight:700}
 .person .sub{display:block;font-size:12px;color:var(--muted);font-weight:500}
 .recent .item{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:12px;cursor:pointer;border:0;background:transparent;text-align:left;width:100%}
@@ -50,7 +52,7 @@ button,input,textarea,select{font:inherit;color:inherit}
 .recent .item span{font-size:12px;color:var(--muted)}
 .recent .none{font-size:13px;color:var(--muted);padding:6px 12px}
 
-.main{padding:22px 26px 28px;min-width:0;overflow:auto}
+.main{padding:22px 22px 28px;min-width:0;overflow:auto}
 .head{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
 .head .big{width:72px;height:72px;border-radius:20px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:24px;font-weight:800}
 .head h1{margin:0;font-size:26px;letter-spacing:-.02em;font-weight:800}
@@ -114,13 +116,18 @@ details.more .grid{margin-top:12px}
 /* claims list */
 .tbl{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .tblwrap{overflow-x:auto;border-radius:var(--r)}
-.tbl th,.tbl td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;font-size:14px}
+.tbl th,.tbl td{padding:10px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13.5px}
+.tbl td.date{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
 .tbl th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;background:var(--soft)}
 .tbl tr:last-child td{border-bottom:0}
 .tbl .who{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
-.tbl .motivo{max-width:34ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tbl select,.tbl input{background:var(--soft);border:1px solid transparent;border-radius:10px;padding:6px 9px;font-weight:600;font-size:13px}
-.tbl input{width:11ch}
+.tbl .motivo{line-height:1.3;min-width:16ch}.tbl .motivo span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tbl select,.tbl input{background:var(--soft);border:1px solid transparent;border-radius:10px;padding:6px 9px;font-weight:600;font-size:13px;max-width:100%}
+.tbl input{width:9ch;padding:6px 7px}.tbl input.prov{width:12ch}.tbl select{padding:6px 4px}.tbl .acts{gap:6px}.tbl .acts button{font-size:12px}.tbl .num,.tbl td.amt{text-align:right}.tbl td.amt input{text-align:right;font-variant-numeric:tabular-nums}.tbl td.amt .usd{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.tbl tfoot td{font-weight:800;background:var(--soft);border-top:2px solid var(--line);font-variant-numeric:tabular-nums}.tbl tfoot td small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.chip.rate{display:inline-flex;align-items:center;gap:6px}.chip.rate input{width:6ch;border:0;background:transparent;font-weight:800;color:var(--fg);padding:0;text-align:right}
+.stat.neg b{color:var(--err)}.stat.pos b{color:var(--ok)}.stat small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.tbl .who{white-space:nowrap}
 .tbl .acts{display:flex;gap:10px;white-space:nowrap}
 .tbl .acts a,.tbl .acts button{border:0;background:transparent;color:var(--accent);font-weight:800;cursor:pointer;text-decoration:none;font-size:13px;padding:0}
 .tbl .acts button.del{color:var(--err)}
@@ -287,14 +294,15 @@ details.more .grid{margin-top:12px}
         <header class="head">
           <div>
             <h1>Reclamos</h1>
-            <div class="meta"><span class="chip" id="listSub">All claims sent to INS</span></div>
+            <div class="meta"><span class="chip">All claims sent to INS</span><span class="chip rate">₡ per $ <input id="rate" inputmode="decimal" aria-label="Tipo de cambio"></span></div>
           </div>
           <div class="right"><button type="button" class="ghost" id="refreshList">Refresh</button></div>
         </header>
         <div class="stats" id="stats"></div>
         <div class="tblwrap"><table class="tbl" id="tbl">
-          <thead><tr><th>Fecha</th><th>Persona</th><th>Motivo</th><th>Factura</th><th>Estado</th><th>Reembolso</th><th></th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Persona</th><th>Motivo</th><th>Proveedor</th><th class="num">Factura</th><th>Estado</th><th class="num">Reembolso</th><th></th></tr></thead>
           <tbody id="rows"></tbody>
+          <tfoot id="foot"></tfoot>
         </table></div>
         <div class="empty" id="emptyList" hidden>No claims yet. Create one from the first tab.</div>
       </div>
@@ -317,6 +325,7 @@ const TIPO={enf:"Enfermedad",acc:"Accidente",mat:"Maternidad",otr:"Otros"};
 function today(){const d=new Date();return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`}
 function status(msg,cls){const s=$("status");s.textContent=msg;s.className=cls||""}
 function initials(p){return ((p.nom||p.label||"?")[0]+(p.ap1||"")[0]).toUpperCase()}
+function pc(key){return ["rhina","matt","chloe"].includes(key)?" c-"+key:""}
 function norm(t){return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 
 async function api(opts){const r=await fetch(FN+(opts.q||""),{method:opts.method||"GET",headers:hdr(),body:opts.body});
@@ -340,14 +349,14 @@ function renderPeople(){
   const q=norm($("q").value);const box=$("people");box.textContent="";
   people.filter(p=>!q||norm(p.label+" "+p.nom+" "+p.ap1).includes(q)).forEach(p=>{
     const b=document.createElement("button");b.type="button";b.className="person";b.dataset.k=p.key;b.setAttribute("aria-pressed",p.key===person);
-    const av=document.createElement("span");av.className="av";av.textContent=initials(p);
+    const av=document.createElement("span");av.className="av"+pc(p.key);av.textContent=initials(p);
     const t=document.createElement("span");const nm=document.createElement("span");nm.className="nm";nm.textContent=[p.nom,p.ap1].filter(Boolean).join(" ")||p.label;
     const sub=document.createElement("span");sub.className="sub";sub.textContent=p.prof||"";t.append(nm,sub);
     b.append(av,t);b.onclick=()=>{pick(p.key);showView("new")};box.appendChild(b)});
 }
 function pick(k){person=k;const p=people.find(x=>x.key===k);if(!p)return;
   document.querySelectorAll(".person").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));
-  $("bigAv").textContent=initials(p);$("pname").textContent=[p.nom,p.ap1,p.ap2].filter(Boolean).join(" ");
+  $("bigAv").textContent=initials(p);$("bigAv").className="big"+pc(p.key);$("pname").textContent=[p.nom,p.ap1,p.ap2].filter(Boolean).join(" ");
   const m=$("pmeta");m.textContent="";
   const ins=p.asegurado!==p.key?people.find(x=>x.key===p.asegurado):null;
   [p.prof,p.poliza&&("Póliza "+p.poliza),p.otroseg&&("+ "+p.otroseg),ins&&("Asegurado: "+(ins.nom||ins.label).split(" ")[0])].filter(Boolean).forEach(t=>{const c=document.createElement("span");c.className="chip";c.textContent=t;m.appendChild(c)});
@@ -438,7 +447,12 @@ $("f").addEventListener("submit",async e=>{e.preventDefault();const btn=$("go");
 });
 
 /* claims list */
-function money(s){return s||"—"}
+function getRate(){const v=parseFloat(ls.get("ins-rate")||"");return v>0?v:500}
+function parseAmt(str){if(!str)return null;let t=String(str).trim();const usd=/\$|usd/i.test(t);t=t.replace(/[^0-9.,-]/g,"");
+  if(/,\d{1,2}$/.test(t)&&!/\./.test(t))t=t.replace(",",".");t=t.replace(/,/g,"");const n=parseFloat(t);return isNaN(n)?null:{n,usd}}
+function toCRC(a){return a?(a.usd?a.n*getRate():a.n):0}
+function fmtCRC(n){return "₡"+Math.round(n).toLocaleString("en-US")}
+function fmtDate(d){const m=/(\d{1,2})\D+(\d{1,2})\D+(\d{4})/.exec(d||"");return m?`${m[1].padStart(2,"0")}.${m[2].padStart(2,"0")}.${m[3]}`:(d||"")}
 async function loadClaims(force){
   try{const r=await api({q:"?list=claims"});if(!r.ok)return;claims=(await r.json()).claims||[]}catch(e){return}
   const badge=$("countBadge");const open=claims.filter(c=>c.estado==="enviado").length;badge.hidden=!open;badge.textContent=open;
@@ -447,31 +461,57 @@ async function loadClaims(force){
 function renderRecent(){const box=$("recent");box.textContent="";
   if(!claims.length){const d=document.createElement("div");d.className="none";d.textContent="No claims yet.";box.appendChild(d);return}
   claims.slice(0,5).forEach(c=>{const b=document.createElement("button");b.type="button";b.className="item";
-    const t=document.createElement("b");t.textContent=(c.who||"")+" · "+(c.fecha||"");const s=document.createElement("span");s.textContent=c.sintomas||TIPO[c.tipo]||"";
+    const t=document.createElement("b");t.textContent=(c.who||"")+" · "+fmtDate(c.fecha);const s=document.createElement("span");s.textContent=c.sintomas||TIPO[c.tipo]||"";
     b.append(t,s);b.onclick=()=>showView("list");box.appendChild(b)})}
+function totals(){
+  let inv=0,re=0,pend=0,invPaid=0,invUsd=0,reUsd=0,invCrc=0,reCrc=0;
+  claims.forEach(c=>{const a=parseAmt(c.monto),b=parseAmt(c.reembolso);const ac=toCRC(a),bc=toCRC(b);inv+=ac;re+=bc;
+    if(a){a.usd?invUsd+=a.n:invCrc+=a.n}if(b){b.usd?reUsd+=b.n:reCrc+=b.n}
+    if(c.estado==="enviado")pend+=ac;else invPaid+=ac});
+  return {inv,re,pend,notCovered:invPaid-re,invUsd,reUsd,invCrc,reCrc}}
+function renderStats(){
+  const t=totals();const st=$("stats");st.textContent="";
+  const mk=(n,l,sub,cls)=>{const d=document.createElement("div");d.className="stat "+(cls||"");const b=document.createElement("b");b.textContent=n;const s=document.createElement("span");s.textContent=l;d.append(b,s);if(sub){const sm=document.createElement("small");sm.textContent=sub;d.appendChild(sm)}st.appendChild(d)};
+  mk(claims.length,"Claims",claims.filter(c=>c.estado==="enviado").length+" pending");
+  mk(fmtCRC(t.inv),"Invoiced",t.invUsd?"incl. $"+t.invUsd.toFixed(2)+" at ₡"+getRate():"");
+  mk(fmtCRC(t.re),"Reimbursed by INS",t.reUsd?"incl. $"+t.reUsd.toFixed(2):"","pos");
+  mk(fmtCRC(t.pend),"Pending decision","sent, not yet paid");
+  mk(fmtCRC(t.notCovered),"Not covered","on paid or rejected claims",t.notCovered>0?"neg":"");
+}
 function renderClaims(){
   const tb=$("rows");tb.textContent="";$("emptyList").hidden=!!claims.length;$("tbl").hidden=!claims.length;
-  const st=$("stats");st.textContent="";
-  const mk=(n,l)=>{const d=document.createElement("div");d.className="stat";const b=document.createElement("b");b.textContent=n;const s=document.createElement("span");s.textContent=l;d.append(b,s);st.appendChild(d)};
-  mk(claims.length,"Total");mk(claims.filter(c=>c.estado==="enviado").length,"Pending");mk(claims.filter(c=>c.estado==="pagado").length,"Reimbursed");
+  renderStats();
   claims.forEach(c=>{
     const tr=document.createElement("tr");
-    const td=(v)=>{const d=document.createElement("td");if(typeof v==="string")d.textContent=v;else d.appendChild(v);tr.appendChild(d);return d};
-    td(c.fecha||new Date(c.created_at).toLocaleDateString("es-CR"));
-    const who=document.createElement("span");who.className="who";const av=document.createElement("span");av.className="av";av.textContent=(c.who||"?")[0].toUpperCase();who.append(av,document.createTextNode(c.who||c.person));td(who);
-    const mo=td(c.sintomas||TIPO[c.tipo]||"");mo.className="motivo";mo.title=(TIPO[c.tipo]||"")+(c.doctor?" · "+c.doctor:"")+(c.sintomas?" · "+c.sintomas:"");
-    td(money(c.monto)+(c.proveedor?" · "+c.proveedor:""));
-    const sel=document.createElement("select");[["enviado","Enviado"],["pagado","Pagado por INS"],["rechazado","Rechazado"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sel.appendChild(o)});
-    sel.value=c.estado||"enviado";sel.className="pill "+sel.value;sel.onchange=()=>{sel.className="pill "+sel.value;patch(c.id,{estado:sel.value})};td(sel);
-    const re=document.createElement("input");re.placeholder="₡";re.value=c.reembolso||"";re.onchange=()=>patch(c.id,{reembolso:re.value});td(re);
+    const td=(v,cls)=>{const d=document.createElement("td");if(cls)d.className=cls;if(typeof v==="string")d.textContent=v;else d.appendChild(v);tr.appendChild(d);return d};
+    td(fmtDate(c.fecha)||new Date(c.created_at).toLocaleDateString("es-CR"),"date");
+    const who=document.createElement("span");who.className="who";const av=document.createElement("span");av.className="av"+pc(c.person);av.textContent=(c.who||"?")[0].toUpperCase();who.append(av,document.createTextNode(c.who||c.person));td(who);
+    const ms=document.createElement("span");ms.textContent=c.sintomas||TIPO[c.tipo]||"";const mo=td(ms,"motivo");mo.title=(c.sintomas||"")+"\n"+(TIPO[c.tipo]||"")+(c.doctor?" · "+c.doctor:"");
+    const pv=document.createElement("input");pv.className="prov";pv.value=c.proveedor||"";pv.placeholder="Clínica";pv.onchange=()=>patch(c.id,{proveedor:pv.value});td(pv);
+    const mi=document.createElement("input");mi.value=c.monto||"";mi.placeholder="₡";mi.onchange=()=>{patch(c.id,{monto:mi.value});renderClaims()};const mcell=td(mi,"amt");
+    const ma=parseAmt(c.monto);if(ma&&ma.usd){const u=document.createElement("span");u.className="usd";u.textContent="≈ "+fmtCRC(toCRC(ma));mcell.appendChild(u)}
+    const sel=document.createElement("select");[["enviado","Enviado"],["pagado","Pagado"],["rechazado","Rechazado"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sel.appendChild(o)});
+    sel.value=c.estado||"enviado";sel.className="pill "+sel.value;sel.onchange=()=>{sel.className="pill "+sel.value;patch(c.id,{estado:sel.value});renderStats();renderFoot()};td(sel);
+    const re=document.createElement("input");re.placeholder="₡";re.value=c.reembolso||"";re.onchange=()=>{patch(c.id,{reembolso:re.value});renderStats();renderFoot()};const rcell=td(re,"amt");
+    const ra=parseAmt(c.reembolso);if(ra&&ra.usd){const u=document.createElement("span");u.className="usd";u.textContent="≈ "+fmtCRC(toCRC(ra));rcell.appendChild(u)}
     const acts=document.createElement("span");acts.className="acts";
     if(c.pdf_path){const a=document.createElement("button");a.type="button";a.textContent="PDF";a.onclick=()=>openPdf(c);acts.appendChild(a)}
     const del=document.createElement("button");del.type="button";del.className="del";del.textContent="Delete";del.onclick=()=>{if(del.dataset.arm){remove(c.id)}else{del.dataset.arm="1";del.textContent="Sure?";setTimeout(()=>{del.textContent="Delete";delete del.dataset.arm},3000)}};acts.appendChild(del);
     td(acts);tb.appendChild(tr)});
+  renderFoot();
 }
+function renderFoot(){
+  const t=totals();const f=$("foot");f.textContent="";const tr=document.createElement("tr");
+  const cell=(txt,sub,cls)=>{const d=document.createElement("td");if(cls)d.className=cls;d.textContent=txt;if(sub){const s=document.createElement("small");s.textContent=sub;d.appendChild(s)}tr.appendChild(d)};
+  cell("Total");cell("");cell("");cell("");
+  cell(fmtCRC(t.inv),(t.invCrc?fmtCRC(t.invCrc):"")+(t.invUsd?(t.invCrc?" + ":"")+"$"+t.invUsd.toFixed(2):""),"amt");
+  cell("");
+  cell(fmtCRC(t.re),(t.reCrc?fmtCRC(t.reCrc):"")+(t.reUsd?(t.reCrc?" + ":"")+"$"+t.reUsd.toFixed(2):""),"amt");
+  cell("");f.appendChild(tr)}
+$("rate").value=getRate();
+$("rate").onchange=()=>{const v=parseFloat($("rate").value);if(v>0){ls.set("ins-rate",String(v))}$("rate").value=getRate();renderClaims()};
 async function patch(id,fields){const fd=new FormData();fd.append("action","status");fd.append("id",id);for(const k in fields)fd.append(k,fields[k]);await api({method:"POST",body:fd});
-  const c=claims.find(x=>x.id===id);if(c)Object.assign(c,fields);const badge=$("countBadge");const open=claims.filter(c=>c.estado==="enviado").length;badge.hidden=!open;badge.textContent=open;
-  const st=$("stats").querySelectorAll(".stat b");if(st.length===3){st[1].textContent=open;st[2].textContent=claims.filter(c=>c.estado==="pagado").length}}
+  const c=claims.find(x=>x.id===id);if(c)Object.assign(c,fields);const badge=$("countBadge");const open=claims.filter(c=>c.estado==="enviado").length;badge.hidden=!open;badge.textContent=open}
 async function remove(id){const fd=new FormData();fd.append("action","delete");fd.append("id",id);await api({method:"POST",body:fd});claims=claims.filter(c=>c.id!==id);renderClaims();renderRecent()}
 async function openPdf(c){const r=await api({q:"?pdf="+encodeURIComponent(c.id)});if(!r.ok)return;const blob=await r.blob();const u=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=u;a.download=(c.pdf_path||"reclamo.pdf").split("/").pop().replace(/^[0-9a-f-]{36}_/,"");document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}

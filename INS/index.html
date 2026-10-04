@@ -64,10 +64,10 @@ textarea{resize:vertical;min-height:64px}
 
   <section id="login" class="login" hidden>
     <h1>INS Reclamos</h1>
-    <p class="sub">Sign in with your email. We send you a login link.</p>
+    <p class="sub">Enter the password to continue.</p>
     <form id="loginForm">
-      <label>Email<input id="email" type="email" autocomplete="email" required></label>
-      <button class="btn" id="sendLink">Send login link</button>
+      <label>Password<input id="pw" type="password" autocomplete="current-password" required></label>
+      <button class="btn" id="sendLink">Continue</button>
       <span id="loginMsg" class="sub" aria-live="polite"></span>
     </form>
   </section>
@@ -77,7 +77,7 @@ textarea{resize:vertical;min-height:64px}
       <div>
         <h1>INS Reclamos</h1>
         <p class="sub">Fill the claim, add page 1 and the invoice, download one PDF.</p>
-        <p class="me"><span id="who"></span><button class="link" id="logout" type="button">Sign out</button></p>
+        <p class="me"><button class="link" id="logout" type="button">Lock</button></p>
       </div>
       <div class="who" role="group" aria-label="Persona" id="people"></div>
     </header>
@@ -149,27 +149,27 @@ textarea{resize:vertical;min-height:64px}
   </section>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SB_URL="https://strmsyhkwsfqbwjabkzq.supabase.co";
 const SB_KEY="sb_publishable_DHM0qYA1JnwUNX2lQZKj3A_K1ji7puA";
 const FN=SB_URL+"/functions/v1/ins-claim";
-const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
 let person=null, people=[], lastUrl=null;
 const files={first:[],invoice:[]};
+function getKey(){try{return localStorage.getItem("ins-key")||""}catch(e){return ""}}
+function setKey(v){try{v?localStorage.setItem("ins-key",v):localStorage.removeItem("ins-key")}catch(e){}}
+const hdr=()=>({"x-ins-key":getKey(),apikey:SB_KEY});
 
 function today(){const d=new Date();return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`}
 function status(msg,err){const s=$("status");s.textContent=msg;s.classList.toggle("err",!!err)}
-async function token(){const {data}=await sb.auth.getSession();return data.session?.access_token}
 
-async function show(){
-  const t=await token();
-  $("login").hidden=!!t;$("app").hidden=!t;
-  if(!t)return;
-  const r=await fetch(FN,{headers:{Authorization:"Bearer "+t,apikey:SB_KEY}});
-  if(r.status===401){await sb.auth.signOut();$("app").hidden=true;$("login").hidden=false;$("loginMsg").textContent="This email has no access.";return}
-  const j=await r.json();people=j.people||[];$("who").textContent=j.email;
+async function show(msg){
+  const k=getKey();
+  $("login").hidden=!!k;$("app").hidden=!k;$("loginMsg").textContent=msg||"";
+  if(!k)return;
+  let r;try{r=await fetch(FN,{headers:hdr()})}catch(e){$("loginMsg").textContent="Server not reachable.";return}
+  if(!r.ok){setKey("");let m="Wrong password.";try{m=(await r.json()).error||m}catch(_){}return show(m)}
+  const j=await r.json();people=j.people||[];
   const box=$("people");box.textContent="";
   people.forEach(p=>{const b=document.createElement("button");b.type="button";b.textContent=p.label;b.dataset.k=p.key;b.onclick=()=>pick(p.key);box.appendChild(b)});
   let saved=null;try{saved=localStorage.getItem("ins-person")}catch(e){}
@@ -180,11 +180,8 @@ function pick(k){person=k;const p=people.find(x=>x.key===k);if(!p)return;
   document.querySelectorAll("#people button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));
   $("ocup").value=p.prof||"";try{localStorage.setItem("ins-person",k)}catch(e){}}
 
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();const m=$("loginMsg");m.textContent="Sending…";
-  const {error}=await sb.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.origin+location.pathname}});
-  m.textContent=error?"Could not send the link. Check the email address.":"Check your inbox and tap the link. Open it on this device."});
-$("logout").onclick=async()=>{await sb.auth.signOut();location.reload()};
-sb.auth.onAuthStateChange((ev)=>{if(ev==="SIGNED_IN"||ev==="SIGNED_OUT"){history.replaceState(null,"",location.pathname);show()}});
+$("loginForm").addEventListener("submit",e=>{e.preventDefault();setKey($("pw").value);$("pw").value="";show()});
+$("logout").onclick=()=>{setKey("");show()};
 
 // shrink photos before upload (also turns iPhone photos into JPEG)
 async function prep(file){
@@ -215,8 +212,8 @@ $("f").addEventListener("submit",async e=>{e.preventDefault();const btn=$("go");
     ["sintomas","fecha","lugar","ocup","testigos","hospital","reclamo","fsig","d1n","d1a","d1d","d1m","d1y","d2n","d2a","d2d","d2m","d2y"].forEach(id=>claim[id]=$(id).value.trim());
     const fd=new FormData();fd.append("claim",JSON.stringify(claim));
     files.first.forEach(f=>fd.append("first",f,f.name));files.invoice.forEach(f=>fd.append("invoice",f,f.name));
-    const res=await fetch(FN,{method:"POST",headers:{Authorization:"Bearer "+await token(),apikey:SB_KEY},body:fd});
-    if(!res.ok){let m="Something went wrong.";try{m=(await res.json()).error||m}catch(_){}throw new Error(m)}
+    const res=await fetch(FN,{method:"POST",headers:hdr(),body:fd});
+    if(!res.ok){let m="Something went wrong.";try{m=(await res.json()).error||m}catch(_){}if(res.status===401){setKey("");show(m);return}throw new Error(m)}
     const name=(/filename="([^"]+)"/.exec(res.headers.get("content-disposition")||"")||[])[1]||"INS_Reclamo.pdf";
     const blob=await res.blob();if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);
     const pv=$("preview");pv.textContent="";const fr=document.createElement("iframe");fr.title="PDF";fr.src=lastUrl;pv.appendChild(fr);

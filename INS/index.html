@@ -5,148 +5,301 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>INS Reclamos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
 <style>
 :root{
-  --bg:#f3f5f4;--panel:#fff;--fg:#17201c;--muted:#5d6b65;--line:#d5ddd9;
-  --accent:#0b6b4f;--accent-fg:#fff;--chip:#e4efe9;--err:#b42318;
-  --f:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  color-scheme:light;
+  --page:#e9ebee;--shell:#f6f7f8;--panel:#ffffff;--fg:#1a1d21;--muted:#7a8088;--line:#e4e7ea;--soft:#f1f3f5;
+  --accent:#1f6f5c;--accent-soft:#e7f1ee;--sel:#eef2ff;--err:#b42318;--ok:#1e8e5a;--warn:#b7791f;--warn-soft:#fff6e5;
+  --f:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:18px;color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{--bg:#111614;--panel:#1a211e;--fg:#e6ece9;--muted:#9aa8a2;--line:#2e3833;--accent:#3fb98c;--accent-fg:#06140e;--chip:#1f3129;--err:#ff8a80;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 var(--f)}
-.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:calc(20px + env(safe-area-inset-top,0px)) 40px}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:18px}
-h1{margin:0;font-size:22px}
-.sub{color:var(--muted);margin:4px 0 0;font-size:13px}
-.me{font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center}
-.link{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:0;text-decoration:underline}
-.grid{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
-form{display:flex;flex-direction:column;gap:14px}
-fieldset{margin:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px 14px 14px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-legend{font:600 11px var(--f);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:0 6px}
-label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);grid-column:span 6;min-width:0}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--fg);font:15px/1.45 var(--f);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.shell{max-width:1360px;margin:0 auto;padding:18px;min-height:100%}
+.app{background:var(--shell);border-radius:28px;box-shadow:0 20px 50px rgba(0,0,0,.08);display:grid;grid-template-columns:84px 290px minmax(0,1fr);min-height:calc(100vh - 36px);overflow:hidden}
+
+.rail{padding:18px 14px;display:flex;flex-direction:column;gap:12px;align-items:center;border-right:1px solid var(--line)}
+.rail button{width:56px;height:56px;border:0;border-radius:16px;background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.05);display:grid;place-items:center;cursor:pointer;color:var(--fg);position:relative}
+.rail button[aria-pressed="true"]{background:var(--sel);color:var(--accent)}
+.rail svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.rail .badge{position:absolute;top:8px;right:8px;background:#36c38f;color:#fff;font-size:11px;font-weight:800;border-radius:999px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 5px}
+.rail .spacer{flex:1}
+
+.side{padding:18px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px;min-width:0}
+.search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.search input{border:0;background:transparent;flex:1;min-width:0;padding:0}
+.search input::placeholder{color:var(--muted)}
+.search svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:1.8}
+.tree{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.group{display:flex;align-items:center;gap:8px;padding:8px 6px;color:var(--muted);font-size:13px;font-weight:600;letter-spacing:.02em}
+.group .add{margin-left:auto;border:0;background:transparent;color:var(--muted);width:26px;height:26px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}
+.group .add:hover{background:var(--soft)}
+.person{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:0;background:transparent;text-align:left;width:100%;cursor:pointer}
+.person[aria-pressed="true"]{background:var(--sel)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.person .nm{font-weight:700}
+.person .sub{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.recent .item{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:12px;cursor:pointer;border:0;background:transparent;text-align:left;width:100%}
+.recent .item:hover{background:var(--soft)}
+.recent .item b{font-weight:700;font-size:14px}
+.recent .item span{font-size:12px;color:var(--muted)}
+.recent .none{font-size:13px;color:var(--muted);padding:6px 12px}
+
+.main{padding:22px 26px 28px;min-width:0;overflow:auto}
+.head{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.head .big{width:72px;height:72px;border-radius:20px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:24px;font-weight:800}
+.head h1{margin:0;font-size:26px;letter-spacing:-.02em;font-weight:800}
+.head .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ghost{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:9px 14px;cursor:pointer;font-weight:700;font-size:14px}
+.ghost:hover{background:var(--soft)}
+.ghost.ai{border-color:var(--accent);color:var(--accent)}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 18px}
+.card h2{margin:0 0 12px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;align-items:center;gap:8px}
+.card h2 .step{background:var(--accent);color:#fff;border-radius:999px;width:20px;height:20px;display:grid;place-items:center;font-size:11px}
+.card + .card{margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600;grid-column:span 6;min-width:0}
 .s3{grid-column:span 3}.s2{grid-column:span 2}
-input,textarea{font:15px var(--f);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 9px;min-width:0;width:100%}
-textarea{resize:vertical;min-height:64px}
-:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.radios{grid-column:span 6;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.radios>span{font-size:12px;color:var(--muted);width:100%}
-.radios label{flex-direction:row;align-items:center;gap:6px;grid-column:auto;background:var(--chip);color:var(--fg);padding:6px 11px;border-radius:999px;font-size:14px;cursor:pointer}
-.radios input{width:auto;margin:0;accent-color:var(--accent)}
-.who{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px}
-.who button{border:0;background:transparent;color:var(--fg);font:600 15px var(--f);padding:8px 18px;border-radius:7px;cursor:pointer}
-.who button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
-.docrow{grid-column:span 6;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,.7fr) minmax(0,.7fr) minmax(0,1.1fr);gap:6px}
-.drop{grid-column:span 6;border:1.5px dashed var(--line);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
-.drop strong{font-size:14px}
+.i{background:var(--soft);border:1px solid transparent;border-radius:12px;padding:10px 12px;width:100%;min-width:0;color:var(--fg);font-weight:600}
+.i:focus{background:#fff;border-color:var(--accent);outline:0}
+textarea.i{resize:vertical;min-height:70px}
+.i.filled{background:#eefaf4}
+.seg{display:flex;flex-wrap:wrap;gap:6px;grid-column:span 6}
+.seg .lbl{width:100%;font-size:12.5px;color:var(--muted);font-weight:600}
+.seg label{display:flex;align-items:center;gap:7px;background:var(--soft);padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13.5px}
+.seg label:has(input:checked){background:var(--accent-soft);color:var(--accent)}
+.seg input{margin:0;accent-color:var(--accent)}
+.drops{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drop{border:1.5px dashed #cfd5da;border-radius:14px;padding:12px 14px;background:var(--soft);display:flex;flex-direction:column;gap:6px;min-width:0}
+.drop b{font-size:14px}
 .drop small{color:var(--muted)}
-.drop input{background:transparent;border:0;padding:0}
+.drop .pick{align-self:flex-start;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;cursor:pointer;font-weight:700;font-size:13px}
+.drop input[type=file]{display:none}
 .files{display:flex;flex-direction:column;gap:4px;font-size:13px}
-.files div{display:flex;justify-content:space-between;gap:8px}
+.files div{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .files span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.actions{position:sticky;bottom:0;padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{border:0;background:var(--accent);color:var(--accent-fg);font:600 16px var(--f);padding:12px 22px;border-radius:9px;cursor:pointer}
-.btn[disabled]{opacity:.6;cursor:progress}
-.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
-#status{font-size:14px;color:var(--muted);min-width:0}
-#status.err{color:var(--err)}
-.preview{position:sticky;top:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.preview iframe{width:100%;height:80vh;border:0;display:block}
-.preview p{color:var(--muted);padding:24px;text-align:center;max-width:36ch}
-.login{max-width:420px;margin:12vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px}
-.login h1{font-size:20px}
+.files button{border:0;background:transparent;color:var(--err);cursor:pointer;font-weight:700;font-size:12.5px}
+.docrow{grid-column:span 6;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,.7fr) minmax(0,.7fr) minmax(0,1.1fr);gap:6px}
+.docrow.h{font-size:12px;color:var(--muted);font-weight:600}
+details.more{grid-column:span 6}
+details.more summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14px;list-style:none;display:flex;align-items:center;gap:6px}
+details.more summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+details.more[open] summary::before{transform:rotate(45deg)}
+details.more .grid{margin-top:12px}
+.note{grid-column:span 6;font-size:13px;color:var(--muted);background:var(--soft);border-radius:12px;padding:10px 12px}
+.note.read{background:#eefaf4;color:#1b5e45}
+
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(246,247,248,0),var(--shell) 30%);padding:14px 0 2px}
+.btn{border:0;background:var(--accent);color:#fff;border-radius:14px;padding:12px 22px;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 6px 16px rgba(31,111,92,.25)}
+.btn[disabled]{opacity:.6;cursor:progress;box-shadow:none}
+#status{font-size:13.5px;color:var(--muted);font-weight:600}
+#status.err{color:var(--err)}#status.ok{color:var(--ok)}
+
+.preview{position:sticky;top:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);min-height:520px;display:flex;flex-direction:column;overflow:hidden}
+.preview .ph{flex:1;display:grid;place-items:center;color:var(--muted);text-align:center;padding:30px;font-weight:600}
+.preview iframe{width:100%;height:78vh;border:0;display:block}
+.preview .bar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700}
+.preview .bar a{margin-left:auto;color:var(--accent);text-decoration:none;font-weight:800}
+
+/* claims list */
+.tbl{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tblwrap{overflow-x:auto;border-radius:var(--r)}
+.tbl th,.tbl td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;font-size:14px}
+.tbl th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;background:var(--soft)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .who{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
+.tbl .motivo{max-width:34ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl select,.tbl input{background:var(--soft);border:1px solid transparent;border-radius:10px;padding:6px 9px;font-weight:600;font-size:13px}
+.tbl input{width:11ch}
+.tbl .acts{display:flex;gap:10px;white-space:nowrap}
+.tbl .acts a,.tbl .acts button{border:0;background:transparent;color:var(--accent);font-weight:800;cursor:pointer;text-decoration:none;font-size:13px;padding:0}
+.tbl .acts button.del{color:var(--err)}
+.pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700;background:var(--soft);color:var(--muted)}
+.pill.pagado{background:#e3f6ec;color:var(--ok)}.pill.rechazado{background:#fdecea;color:var(--err)}.pill.enviado{background:var(--warn-soft);color:var(--warn)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;min-width:120px}
+.stat b{display:block;font-size:20px;font-weight:800}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.empty{color:var(--muted);padding:30px;text-align:center;font-weight:600}
+
+.lock{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lock form{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;width:min(400px,100%);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.08)}
+.lock h1{margin:0;font-size:22px;font-weight:800}
+.lock p{margin:0;color:var(--muted);font-size:14px}
+.lock .msg{min-height:1.2em;font-size:13.5px;color:var(--err);font-weight:600}
+
+@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr)}.preview{position:static}.preview iframe{height:70vh}}
+@media (max-width:860px){
+  .shell{padding:0}.app{border-radius:0;grid-template-columns:minmax(0,1fr);min-height:100vh}
+  .rail{flex-direction:row;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px}.rail .spacer{flex:1}
+  .side{border-right:0;border-bottom:1px solid var(--line);padding:12px 16px}
+  .tree{flex-direction:row;flex-wrap:wrap;gap:6px}.group{width:100%}.person{width:auto}
+  .recent{display:none}.search{display:none}
+  .main{padding:16px 16px 24px}.drops{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <section id="login" class="login" hidden>
+<section id="login" class="lock" hidden>
+  <form id="loginForm">
     <h1>INS Reclamos</h1>
-    <p class="sub">Enter the password to continue.</p>
-    <form id="loginForm">
-      <label>Password<input id="pw" type="password" autocomplete="current-password" required></label>
-      <button class="btn" id="sendLink">Continue</button>
-      <span id="loginMsg" class="sub" aria-live="polite"></span>
-    </form>
-  </section>
+    <p>Enter the password to continue.</p>
+    <label class="f">Password<input id="pw" class="i" type="password" autocomplete="current-password" required></label>
+    <button class="btn" id="goLogin">Continue</button>
+    <span id="loginMsg" class="msg" aria-live="polite"></span>
+  </form>
+</section>
 
-  <section id="app" hidden>
-    <header>
-      <div>
-        <h1>INS Reclamos</h1>
-        <p class="sub">Fill the claim, add page 1 and the invoice, download one PDF.</p>
-        <p class="me"><button class="link" id="logout" type="button">Lock</button></p>
+<div id="app" class="shell" hidden>
+  <div class="app">
+    <nav class="rail" aria-label="Secciones">
+      <button type="button" id="nav-new" aria-pressed="true" title="Nuevo reclamo" aria-label="Nuevo reclamo">
+        <svg viewBox="0 0 24 24"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v6h6"/><path d="M12 11v6M9 14h6"/></svg>
+      </button>
+      <button type="button" id="nav-list" aria-pressed="false" title="Reclamos" aria-label="Reclamos">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span class="badge" id="countBadge" hidden>0</span>
+      </button>
+      <span class="spacer"></span>
+      <button type="button" id="lockBtn" title="Lock" aria-label="Lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </button>
+    </nav>
+
+    <aside class="side">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" placeholder="Search" aria-label="Buscar persona">
       </div>
-      <div class="who" role="group" aria-label="Persona" id="people"></div>
-    </header>
+      <div class="tree">
+        <div class="group"><span>Personas</span><button type="button" class="add" id="addPerson" title="Añadir persona">+</button></div>
+        <div id="people"></div>
+      </div>
+      <div class="recent">
+        <div class="group"><span>Recientes</span></div>
+        <div id="recent"></div>
+      </div>
+    </aside>
 
-    <div class="grid">
-      <form id="f" autocomplete="off">
-        <fieldset>
-          <legend>Documentos</legend>
-          <div class="drop">
-            <strong>Página 1 del documento</strong>
-            <small>Photo or PDF. Goes before the INS form.</small>
-            <input type="file" id="first" accept="image/*,application/pdf" multiple>
-            <div class="files" id="firstList"></div>
+    <main class="main">
+      <!-- NEW CLAIM -->
+      <div id="viewNew">
+        <header class="head">
+          <div class="big" id="bigAv">R</div>
+          <div>
+            <h1 id="pname">…</h1>
+            <div class="meta" id="pmeta"></div>
           </div>
-          <div class="drop">
-            <strong>Factura / comprobante de pago</strong>
-            <small>Photos or PDFs. Added after the INS form.</small>
-            <input type="file" id="invoice" accept="image/*,application/pdf" multiple>
-            <div class="files" id="invoiceList"></div>
+          <div class="right">
+            <button type="button" class="ghost" id="clear">Start over</button>
           </div>
-        </fieldset>
+        </header>
 
-        <fieldset>
-          <legend>Reclamo</legend>
-          <div class="radios"><span>El reclamo fue a consecuencia de</span>
-            <label><input type="radio" name="tipo" value="enf" checked>Enfermedad</label>
-            <label><input type="radio" name="tipo" value="acc">Accidente</label>
-            <label><input type="radio" name="tipo" value="mat">Maternidad</label>
-            <label><input type="radio" name="tipo" value="otr">Otros</label>
-          </div>
-          <label>Primeros síntomas / descripción<textarea id="sintomas" placeholder="Dolor en el abdomen"></textarea></label>
-          <label class="s2">Fecha<input id="fecha" placeholder="dd/mm/aaaa" inputmode="numeric"></label>
-          <label class="s2">Lugar<input id="lugar" placeholder="Casa"></label>
-          <label class="s2">Ocupación<input id="ocup"></label>
-          <div class="radios"><span>¿Se debió a la ocupación del paciente?</span>
-            <label><input type="radio" name="ocrel" value="no" checked>No</label>
-            <label><input type="radio" name="ocrel" value="si">Sí</label>
-          </div>
-          <label class="s3">Testigos<input id="testigos"></label>
-          <label class="s3">Hospital y días<input id="hospital"></label>
-        </fieldset>
+        <div class="cols">
+          <form id="f" autocomplete="off">
+            <section class="card">
+              <h2><span class="step">1</span>Documentos</h2>
+              <div class="drops">
+                <div class="drop">
+                  <b>Informe del médico</b>
+                  <small>Photo or PDF. Goes in front of the INS form.</small>
+                  <label class="pick">Choose files<input type="file" id="first" accept="image/*,application/pdf" multiple></label>
+                  <div class="files" id="firstList"></div>
+                </div>
+                <div class="drop">
+                  <b>Factura pagada</b>
+                  <small>Photos or PDFs. Added after the form.</small>
+                  <label class="pick">Choose files<input type="file" id="invoice" accept="image/*,application/pdf" multiple></label>
+                  <div class="files" id="invoiceList"></div>
+                </div>
+              </div>
+              <div class="actions" style="position:static;padding:12px 0 0;background:none">
+                <button type="button" class="ghost ai" id="readBtn">Read documents with AI</button>
+                <span id="readMsg" style="font-size:13px;color:var(--muted);font-weight:600"></span>
+              </div>
+            </section>
 
-        <fieldset>
-          <legend>Médico (opcional)</legend>
-          <div class="docrow sub"><span>Nombre</span><span>Dirección</span><span>Día</span><span>Mes</span><span>Año</span></div>
-          <div class="docrow"><input id="d1n" aria-label="Médico 1 nombre"><input id="d1a" aria-label="Médico 1 dirección"><input id="d1d" aria-label="Día"><input id="d1m" aria-label="Mes"><input id="d1y" aria-label="Año"></div>
-          <div class="docrow"><input id="d2n" aria-label="Médico 2 nombre"><input id="d2a" aria-label="Médico 2 dirección"><input id="d2d" aria-label="Día"><input id="d2m" aria-label="Mes"><input id="d2y" aria-label="Año"></div>
-        </fieldset>
+            <section class="card">
+              <h2><span class="step">2</span>Revisar</h2>
+              <div class="grid">
+                <div class="note" id="readNote" hidden></div>
+                <label class="f">Motivo (síntomas o diagnóstico)<textarea id="sintomas" class="i" placeholder="Dolor en el abdomen"></textarea></label>
+                <label class="f s3">Fecha<input id="fecha" class="i" placeholder="dd/mm/aaaa" inputmode="numeric"></label>
+                <label class="f s3">Monto factura<input id="monto" class="i" placeholder="₡"></label>
 
-        <fieldset>
-          <legend>Firma</legend>
-          <label class="s3">Fecha de firma<input id="fsig"></label>
-          <label class="s3">Reclamo No.<input id="reclamo"></label>
-          <div class="radios">
-            <label><input type="checkbox" id="firmar" checked>Firmar</label>
-            <label><input type="checkbox" id="parteB">Incluir Parte B en blanco</label>
-          </div>
-        </fieldset>
+                <details class="more">
+                  <summary>More details</summary>
+                  <div class="grid">
+                    <div class="seg"><span class="lbl">Tipo</span>
+                      <label><input type="radio" name="tipo" value="enf" checked>Enfermedad</label>
+                      <label><input type="radio" name="tipo" value="acc">Accidente</label>
+                      <label><input type="radio" name="tipo" value="mat">Maternidad</label>
+                      <label><input type="radio" name="tipo" value="otr">Otros</label>
+                    </div>
+                    <label class="f s3">Lugar<input id="lugar" class="i" value="Casa"></label>
+                    <label class="f s3">Ocupación<input id="ocup" class="i"></label>
+                    <div class="seg"><span class="lbl">¿Se debió a la ocupación?</span>
+                      <label><input type="radio" name="ocrel" value="no" checked>No</label>
+                      <label><input type="radio" name="ocrel" value="si">Sí</label>
+                    </div>
+                    <label class="f s3">Testigos<input id="testigos" class="i"></label>
+                    <label class="f s3">Hospital y días<input id="hospital" class="i"></label>
+                    <label class="f s3">Proveedor (factura)<input id="proveedor" class="i"></label>
+                    <label class="f s3">Reclamo No.<input id="reclamo" class="i"></label>
+                    <div class="docrow h"><span>Médico</span><span>Dirección</span><span>Día</span><span>Mes</span><span>Año</span></div>
+                    <div class="docrow"><input id="d1n" class="i" aria-label="Médico nombre"><input id="d1a" class="i" aria-label="Médico dirección"><input id="d1d" class="i" aria-label="Día"><input id="d1m" class="i" aria-label="Mes"><input id="d1y" class="i" aria-label="Año"></div>
+                    <div class="docrow"><input id="d2n" class="i" aria-label="Médico 2 nombre"><input id="d2a" class="i" aria-label="Médico 2 dirección"><input id="d2d" class="i" aria-label="Día"><input id="d2m" class="i" aria-label="Mes"><input id="d2y" class="i" aria-label="Año"></div>
+                    <label class="f s3">Fecha de firma<input id="fsig" class="i"></label>
+                    <div class="seg s3" style="grid-column:span 3;align-items:end">
+                      <label><input type="checkbox" id="firmar" checked>Firmar</label>
+                      <label><input type="checkbox" id="parteB">Parte B en blanco</label>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            </section>
 
-        <div class="actions">
-          <button class="btn" id="go">Create PDF</button>
-          <button class="btn ghost" id="clear" type="button">Clear</button>
-          <span id="status" aria-live="polite"></span>
+            <div class="actions">
+              <button class="btn" id="go">Create PDF</button>
+              <span id="status" aria-live="polite"></span>
+            </div>
+          </form>
+
+          <section class="preview" id="preview" aria-label="Vista previa">
+            <div class="ph">Your finished PDF shows up here.</div>
+          </section>
         </div>
-      </form>
+      </div>
 
-      <section class="preview" id="preview"><p>Your finished PDF shows up here.</p></section>
-    </div>
-  </section>
+      <!-- CLAIMS LIST -->
+      <div id="viewList" hidden>
+        <header class="head">
+          <div>
+            <h1>Reclamos</h1>
+            <div class="meta"><span class="chip" id="listSub">All claims sent to INS</span></div>
+          </div>
+          <div class="right"><button type="button" class="ghost" id="refreshList">Refresh</button></div>
+        </header>
+        <div class="stats" id="stats"></div>
+        <div class="tblwrap"><table class="tbl" id="tbl">
+          <thead><tr><th>Fecha</th><th>Persona</th><th>Motivo</th><th>Factura</th><th>Estado</th><th>Reembolso</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table></div>
+        <div class="empty" id="emptyList" hidden>No claims yet. Create one from the first tab.</div>
+      </div>
+    </main>
+  </div>
 </div>
 
 <script>
@@ -154,36 +307,61 @@ const SB_URL="https://strmsyhkwsfqbwjabkzq.supabase.co";
 const SB_KEY="sb_publishable_DHM0qYA1JnwUNX2lQZKj3A_K1ji7puA";
 const FN=SB_URL+"/functions/v1/ins-claim";
 const $=id=>document.getElementById(id);
-let person=null, people=[], lastUrl=null;
+let person=null, people=[], lastUrl=null, claims=[];
 const files={first:[],invoice:[]};
-function getKey(){try{return localStorage.getItem("ins-key")||""}catch(e){return ""}}
-function setKey(v){try{v?localStorage.setItem("ins-key",v):localStorage.removeItem("ins-key")}catch(e){}}
-const hdr=()=>({"x-ins-key":getKey(),apikey:SB_KEY});
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const hdr=()=>({"x-ins-key":ls.get("ins-key")||"",apikey:SB_KEY});
+const claimIds=["sintomas","fecha","monto","lugar","ocup","testigos","hospital","proveedor","reclamo","fsig","d1n","d1a","d1d","d1m","d1y","d2n","d2a","d2d","d2m","d2y"];
+const TIPO={enf:"Enfermedad",acc:"Accidente",mat:"Maternidad",otr:"Otros"};
 
 function today(){const d=new Date();return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`}
-function status(msg,err){const s=$("status");s.textContent=msg;s.classList.toggle("err",!!err)}
+function status(msg,cls){const s=$("status");s.textContent=msg;s.className=cls||""}
+function initials(p){return ((p.nom||p.label||"?")[0]+(p.ap1||"")[0]).toUpperCase()}
+function norm(t){return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+
+async function api(opts){const r=await fetch(FN+(opts.q||""),{method:opts.method||"GET",headers:hdr(),body:opts.body});
+  if(r.status===401){ls.set("ins-key",null);let m="Wrong password.";try{m=(await r.json()).error||m}catch(_){}show(m);throw new Error(m)}
+  return r}
 
 async function show(msg){
-  const k=getKey();
+  const k=ls.get("ins-key");
   $("login").hidden=!!k;$("app").hidden=!k;$("loginMsg").textContent=msg||"";
   if(!k)return;
-  let r;try{r=await fetch(FN,{headers:hdr()})}catch(e){$("loginMsg").textContent="Server not reachable.";return}
-  if(!r.ok){setKey("");let m="Wrong password.";try{m=(await r.json()).error||m}catch(_){}return show(m)}
-  const j=await r.json();people=j.people||[];
-  const box=$("people");box.textContent="";
-  people.forEach(p=>{const b=document.createElement("button");b.type="button";b.textContent=p.label;b.dataset.k=p.key;b.onclick=()=>pick(p.key);box.appendChild(b)});
-  let saved=null;try{saved=localStorage.getItem("ins-person")}catch(e){}
+  let r;try{r=await fetch(FN,{headers:hdr()})}catch(e){ls.set("ins-key",null);return show("Server not reachable.")}
+  if(!r.ok){ls.set("ins-key",null);let m="Wrong password.";try{m=(await r.json()).error||m}catch(_){}return show(m)}
+  people=(await r.json()).people||[];
+  renderPeople();
+  const saved=ls.get("ins-person");
   pick(people.some(p=>p.key===saved)?saved:people[0]?.key);
   $("fsig").value=today();
+  loadClaims();
+}
+function renderPeople(){
+  const q=norm($("q").value);const box=$("people");box.textContent="";
+  people.filter(p=>!q||norm(p.label+" "+p.nom+" "+p.ap1).includes(q)).forEach(p=>{
+    const b=document.createElement("button");b.type="button";b.className="person";b.dataset.k=p.key;b.setAttribute("aria-pressed",p.key===person);
+    const av=document.createElement("span");av.className="av";av.textContent=initials(p);
+    const t=document.createElement("span");const nm=document.createElement("span");nm.className="nm";nm.textContent=[p.nom,p.ap1].filter(Boolean).join(" ")||p.label;
+    const sub=document.createElement("span");sub.className="sub";sub.textContent=p.prof||"";t.append(nm,sub);
+    b.append(av,t);b.onclick=()=>{pick(p.key);showView("new")};box.appendChild(b)});
 }
 function pick(k){person=k;const p=people.find(x=>x.key===k);if(!p)return;
-  document.querySelectorAll("#people button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));
-  $("ocup").value=p.prof||"";try{localStorage.setItem("ins-person",k)}catch(e){}}
+  document.querySelectorAll(".person").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));
+  $("bigAv").textContent=initials(p);$("pname").textContent=[p.nom,p.ap1,p.ap2].filter(Boolean).join(" ");
+  const m=$("pmeta");m.textContent="";
+  const ins=p.asegurado!==p.key?people.find(x=>x.key===p.asegurado):null;
+  [p.prof,p.poliza&&("Póliza "+p.poliza),p.otroseg&&("+ "+p.otroseg),ins&&("Asegurado: "+(ins.nom||ins.label).split(" ")[0])].filter(Boolean).forEach(t=>{const c=document.createElement("span");c.className="chip";c.textContent=t;m.appendChild(c)});
+  $("ocup").value=p.prof||"";ls.set("ins-person",k)}
 
-$("loginForm").addEventListener("submit",e=>{e.preventDefault();setKey($("pw").value);$("pw").value="";show()});
-$("logout").onclick=()=>{setKey("");show()};
+function showView(v){$("viewNew").hidden=v!=="new";$("viewList").hidden=v!=="list";
+  $("nav-new").setAttribute("aria-pressed",v==="new");$("nav-list").setAttribute("aria-pressed",v==="list");if(v==="list")loadClaims()}
+$("nav-new").onclick=()=>showView("new");$("nav-list").onclick=()=>showView("list");$("refreshList").onclick=()=>loadClaims(true);
+$("q").addEventListener("input",renderPeople);
+$("addPerson").onclick=()=>status("To add a person, ask Claude to add them on the server.");
+$("loginForm").addEventListener("submit",e=>{e.preventDefault();ls.set("ins-key",$("pw").value);$("pw").value="";show()});
+$("lockBtn").onclick=()=>{ls.set("ins-key",null);show()};
 
-// shrink photos before upload (also turns iPhone photos into JPEG)
+/* files */
 async function prep(file){
   if(file.type==="application/pdf"||/\.pdf$/i.test(file.name))return file;
   try{
@@ -197,31 +375,106 @@ async function prep(file){
 }
 function list(kind){const el=$(kind+"List");el.textContent="";
   files[kind].forEach((f,i)=>{const d=document.createElement("div");const s=document.createElement("span");s.textContent=f.name;
-    const x=document.createElement("button");x.type="button";x.className="link";x.textContent="Remove";x.onclick=()=>{files[kind].splice(i,1);list(kind)};
+    const x=document.createElement("button");x.type="button";x.textContent="Remove";x.onclick=()=>{files[kind].splice(i,1);list(kind)};
     d.append(s,x);el.appendChild(d)})}
 ["first","invoice"].forEach(kind=>$(kind).addEventListener("change",async e=>{
   for(const f of e.target.files)files[kind].push(await prep(f));e.target.value="";list(kind)}));
 
-$("clear").onclick=()=>{["sintomas","fecha","lugar","testigos","hospital","reclamo","d1n","d1a","d1d","d1m","d1y","d2n","d2a","d2d","d2m","d2y"].forEach(id=>$(id).value="");
-  files.first=[];files.invoice=[];list("first");list("invoice");$("fsig").value=today();pick(person);status("")};
+/* AI read */
+function setVal(id,v){if(v==null||v==="")return;const el=$(id);el.value=String(v);el.classList.add("filled")}
+$("readBtn").onclick=async()=>{
+  const msg=$("readMsg");const docs=[...files.first.map(f=>["first",f]),...files.invoice.map(f=>["invoice",f])];
+  if(!docs.length){msg.textContent="Add the doctor's report or an invoice first.";return}
+  $("readBtn").disabled=true;const found=[];
+  try{
+    for(const [kind,f] of docs){
+      msg.textContent="Reading "+f.name+"…";
+      const fd=new FormData();fd.append("action","extract");fd.append("page",f,f.name);
+      const r=await api({method:"POST",body:fd});const j=await r.json();
+      if(!r.ok){msg.textContent=j.error||"Could not read "+f.name;continue}
+      const x=j.fields||{};
+      if(kind==="first"){
+        setVal("sintomas",x.sintomas);setVal("fecha",x.fecha);setVal("lugar",x.lugar);setVal("hospital",x.hospital);
+        setVal("d1n",x.doctor_name);setVal("d1a",x.doctor_address);setVal("d1d",x.consult_day);setVal("d1m",x.consult_month);setVal("d1y",x.consult_year);
+        if(TIPO[x.claim_type])document.querySelector(`input[name=tipo][value=${x.claim_type}]`).checked=true;
+        if(x.patient_name){const n=norm(x.patient_name);const hit=people.find(p=>n.includes(norm(p.nom.split(" ")[0]))&&n.includes(norm(p.ap1)));if(hit){pick(hit.key);found.push("patient "+hit.label)}}
+        if(x.sintomas)found.push("symptoms");if(x.doctor_name)found.push("doctor");if(x.fecha)found.push("date");
+      }
+      if(x.monto){setVal("monto",x.monto);found.push("invoice "+x.monto)}
+      if(x.proveedor)setVal("proveedor",x.proveedor);
+      if(kind==="invoice"&&!$("sintomas").value&&x.sintomas)setVal("sintomas",x.sintomas);
+      if(x.notes&&kind==="first"){const n=$("readNote");n.hidden=false;n.className="note read";n.textContent="Read from the report: "+x.notes}
+    }
+    msg.textContent=found.length?"Filled: "+[...new Set(found)].join(", ")+". Check and adjust below.":"Nothing useful found. Fill in by hand.";
+  }catch(err){msg.textContent=err.message||String(err)}
+  finally{$("readBtn").disabled=false}
+};
 
+/* start over */
+$("clear").onclick=()=>{claimIds.forEach(id=>{$(id).value="";$(id).classList.remove("filled")});$("lugar").value="Casa";
+  document.querySelector('input[name=tipo][value=enf]').checked=true;document.querySelector('input[name=ocrel][value=no]').checked=true;
+  files.first=[];files.invoice=[];list("first");list("invoice");$("fsig").value=today();pick(person);$("readMsg").textContent="";$("readNote").hidden=true;
+  const pv=$("preview");pv.textContent="";const ph=document.createElement("div");ph.className="ph";ph.textContent="Your finished PDF shows up here.";pv.appendChild(ph);status("")};
+
+/* create */
 $("f").addEventListener("submit",async e=>{e.preventDefault();const btn=$("go");btn.disabled=true;status("Building PDF…");
   try{
     const r=n=>(document.querySelector(`input[name=${n}]:checked`)||{}).value;
     const claim={person,tipo:r("tipo"),ocrel:r("ocrel"),firmar:$("firmar").checked,parteB:$("parteB").checked};
-    ["sintomas","fecha","lugar","ocup","testigos","hospital","reclamo","fsig","d1n","d1a","d1d","d1m","d1y","d2n","d2a","d2d","d2m","d2y"].forEach(id=>claim[id]=$(id).value.trim());
+    claimIds.forEach(id=>claim[id]=$(id).value.trim());
     const fd=new FormData();fd.append("claim",JSON.stringify(claim));
     files.first.forEach(f=>fd.append("first",f,f.name));files.invoice.forEach(f=>fd.append("invoice",f,f.name));
-    const res=await fetch(FN,{method:"POST",headers:hdr(),body:fd});
-    if(!res.ok){let m="Something went wrong.";try{m=(await res.json()).error||m}catch(_){}if(res.status===401){setKey("");show(m);return}throw new Error(m)}
+    const res=await api({method:"POST",body:fd});
+    if(!res.ok){let m="Something went wrong.";try{m=(await res.json()).error||m}catch(_){}throw new Error(m)}
     const name=(/filename="([^"]+)"/.exec(res.headers.get("content-disposition")||"")||[])[1]||"INS_Reclamo.pdf";
     const blob=await res.blob();if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);
-    const pv=$("preview");pv.textContent="";const fr=document.createElement("iframe");fr.title="PDF";fr.src=lastUrl;pv.appendChild(fr);
-    const a=document.createElement("a");a.href=lastUrl;a.download=name;document.body.appendChild(a);a.click();a.remove();
-    status("Downloaded "+name);
-  }catch(err){status(err.message||String(err),true)}
+    const pv=$("preview");pv.textContent="";
+    const bar=document.createElement("div");bar.className="bar";bar.textContent=name;const a=document.createElement("a");a.href=lastUrl;a.download=name;a.textContent="Download again";bar.appendChild(a);
+    const fr=document.createElement("iframe");fr.title="PDF";fr.src=lastUrl;pv.append(bar,fr);
+    const dl=document.createElement("a");dl.href=lastUrl;dl.download=name;document.body.appendChild(dl);dl.click();dl.remove();
+    status("Downloaded "+name+" and saved to Reclamos.","ok");loadClaims(true);
+  }catch(err){status(err.message||String(err),"err")}
   finally{btn.disabled=false}
 });
+
+/* claims list */
+function money(s){return s||"—"}
+async function loadClaims(force){
+  try{const r=await api({q:"?list=claims"});if(!r.ok)return;claims=(await r.json()).claims||[]}catch(e){return}
+  const badge=$("countBadge");const open=claims.filter(c=>c.estado==="enviado").length;badge.hidden=!open;badge.textContent=open;
+  renderRecent();renderClaims();
+}
+function renderRecent(){const box=$("recent");box.textContent="";
+  if(!claims.length){const d=document.createElement("div");d.className="none";d.textContent="No claims yet.";box.appendChild(d);return}
+  claims.slice(0,5).forEach(c=>{const b=document.createElement("button");b.type="button";b.className="item";
+    const t=document.createElement("b");t.textContent=(c.who||"")+" · "+(c.fecha||"");const s=document.createElement("span");s.textContent=c.sintomas||TIPO[c.tipo]||"";
+    b.append(t,s);b.onclick=()=>showView("list");box.appendChild(b)})}
+function renderClaims(){
+  const tb=$("rows");tb.textContent="";$("emptyList").hidden=!!claims.length;$("tbl").hidden=!claims.length;
+  const st=$("stats");st.textContent="";
+  const mk=(n,l)=>{const d=document.createElement("div");d.className="stat";const b=document.createElement("b");b.textContent=n;const s=document.createElement("span");s.textContent=l;d.append(b,s);st.appendChild(d)};
+  mk(claims.length,"Total");mk(claims.filter(c=>c.estado==="enviado").length,"Pending");mk(claims.filter(c=>c.estado==="pagado").length,"Reimbursed");
+  claims.forEach(c=>{
+    const tr=document.createElement("tr");
+    const td=(v)=>{const d=document.createElement("td");if(typeof v==="string")d.textContent=v;else d.appendChild(v);tr.appendChild(d);return d};
+    td(c.fecha||new Date(c.created_at).toLocaleDateString("es-CR"));
+    const who=document.createElement("span");who.className="who";const av=document.createElement("span");av.className="av";av.textContent=(c.who||"?")[0].toUpperCase();who.append(av,document.createTextNode(c.who||c.person));td(who);
+    const mo=td(c.sintomas||TIPO[c.tipo]||"");mo.className="motivo";mo.title=(TIPO[c.tipo]||"")+(c.doctor?" · "+c.doctor:"")+(c.sintomas?" · "+c.sintomas:"");
+    td(money(c.monto)+(c.proveedor?" · "+c.proveedor:""));
+    const sel=document.createElement("select");[["enviado","Enviado"],["pagado","Pagado por INS"],["rechazado","Rechazado"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sel.appendChild(o)});
+    sel.value=c.estado||"enviado";sel.className="pill "+sel.value;sel.onchange=()=>{sel.className="pill "+sel.value;patch(c.id,{estado:sel.value})};td(sel);
+    const re=document.createElement("input");re.placeholder="₡";re.value=c.reembolso||"";re.onchange=()=>patch(c.id,{reembolso:re.value});td(re);
+    const acts=document.createElement("span");acts.className="acts";
+    if(c.pdf_path){const a=document.createElement("button");a.type="button";a.textContent="PDF";a.onclick=()=>openPdf(c);acts.appendChild(a)}
+    const del=document.createElement("button");del.type="button";del.className="del";del.textContent="Delete";del.onclick=()=>{if(del.dataset.arm){remove(c.id)}else{del.dataset.arm="1";del.textContent="Sure?";setTimeout(()=>{del.textContent="Delete";delete del.dataset.arm},3000)}};acts.appendChild(del);
+    td(acts);tb.appendChild(tr)});
+}
+async function patch(id,fields){const fd=new FormData();fd.append("action","status");fd.append("id",id);for(const k in fields)fd.append(k,fields[k]);await api({method:"POST",body:fd});
+  const c=claims.find(x=>x.id===id);if(c)Object.assign(c,fields);const badge=$("countBadge");const open=claims.filter(c=>c.estado==="enviado").length;badge.hidden=!open;badge.textContent=open;
+  const st=$("stats").querySelectorAll(".stat b");if(st.length===3){st[1].textContent=open;st[2].textContent=claims.filter(c=>c.estado==="pagado").length}}
+async function remove(id){const fd=new FormData();fd.append("action","delete");fd.append("id",id);await api({method:"POST",body:fd});claims=claims.filter(c=>c.id!==id);renderClaims();renderRecent()}
+async function openPdf(c){const r=await api({q:"?pdf="+encodeURIComponent(c.id)});if(!r.ok)return;const blob=await r.blob();const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=u;a.download=(c.pdf_path||"reclamo.pdf").split("/").pop().replace(/^[0-9a-f-]{36}_/,"");document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
 
 show();
 </script>
